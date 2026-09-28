@@ -10,6 +10,9 @@ This project strictly inherits all global workspace standards, UI/UX responsiven
 ## 1. Project Overview & Architecture
 - **Project Name:** `projectm`
 - **Location:** `C:\Users\sarav\Desktop\jagan\projects\projectm`
+- **GitHub Repository:** `https://github.com/saravanajagan007/projectm`
+- **Live Production URL:** `https://projectm.cloudcrafts.net`
+- **Cloudflare Pages Subdomain:** `https://projectm-28x.pages.dev`
 
 ---
 
