@@ -1,74 +1,95 @@
-# ProjectM — Web Design, Development & Digital Marketing Agency
+# ProjectM — Agency Website & Enterprise Company Portal
 
-A high-converting, single-page agency website built for **ProjectM**, specializing in custom web design/development and data-driven digital marketing (SEO, Google/Meta Ads).
-
-Designed with a clean, **pure white background** (`#ffffff`), modern **emerald green** accents (`#059669`, `#10b981`), fluid typography, mobile-first touch optimization (44px+ hit targets), simple & neat minimal case studies, and shared webhosting compatibility.
+A production-ready full-stack TypeScript monorepo built with **Turborepo**, **Next.js (Frontend)**, and **NestJS (Backend)**.
 
 ---
 
-## 🚀 Key Features
+## 🌐 Public Website & Admin Routing Structure
 
-1. **Pure White & Emerald Green Design:**
-   - Clean, modern, high-contrast light theme with pure white background (`#ffffff`).
-   - Vibrant emerald primary styling (`#059669`) with subtle borders and shadows.
-2. **Smooth Inline Animated Hero Headline:**
-   - Text dynamically cycles through key agency capabilities (`Modern Websites`, `Digital Marketing`, `Targeted SEO`, `Paid Ads & PPC`, `Custom Web Apps`) seamlessly on the exact same line without breaking.
-3. **Streamlined Services:**
-   - Focused strictly on core agency offerings: Custom Web & SaaS Development, Conversion UI/UX, Technical & Content SEO, Google & Meta Paid Advertising, and High-Speed E-Commerce Systems.
-   - Interactive tab filtering across All Services, Web Development, and Digital Marketing.
-4. **Dark Textured Footer:**
-   - Elegant dark textured background (`#080f0c`) featuring micro-dot radial grid patterns, emerald highlights, high-contrast typography, newsletter signup, and full social links.
-5. **Interactive Contact & Sample Map:**
-   - Interactive embedded sample location map.
-   - Prominent **Direct Phone** and **WhatsApp Chat** buttons (`+91 88076 49359`).
-   - Floating WhatsApp quick-connect trigger.
-6. **Lightweight & Shared Hosting Compatible:**
-   - 100% pure HTML5, vanilla CSS3, and JavaScript (ES6+).
-   - Zero Node.js build dependencies or server daemon required.
-   - Ready for instant deployment on any shared web hosting (cPanel, Apache, LiteSpeed, Nginx).
+- **Public Agency Website (`/`):** The root URL serves the high-performance ProjectM digital agency landing page (converted from the HTML5 agency template with Tailwind CSS, Google Fonts Outfit & Plus Jakarta Sans, dynamic hero rotator, service tabs, process roadmap, testimonials, FAQ, and working project inquiry form).
+- **Admin Portal & Login (`/admin`):** 
+  - The login interface is accessible at `/admin` (any navigation to `/login` automatically redirects to `/admin`).
+  - Unauthenticated visitors see the secure Admin Login card with quick-fill demo credentials.
+  - Authenticated users are directed directly to the unified **Manage Companies** panel (`/admin/manage-companies`).
+- **Manage Companies (`/admin/manage-companies`):** The primary hub for authenticated users:
+  - **`ADMIN` Role**: Can add companies, view gallery, edit company details/images, and delete companies.
+  - **`ADD_COMPANY` Role**: Can add companies and view image gallery; edit/delete actions are hidden and guarded.
+  - Includes debounced global search across name, contact person, phone numbers, and email; server-side pagination; country code selector with 10-digit phone validation; and a maximum limit of 5 images per company.
 
 ---
 
-## 📁 Directory Structure
+## 🏗️ Monorepo Architecture
 
 ```
 projectm/
-├── index.html          # Semantic HTML5 single-page architecture (pure white light theme)
-├── css/
-│   └── style.css       # Clean white styling, emerald accents, fluid clamps, mobile-first
-├── js/
-│   ├── main.js         # Interactive navigation, inline dynamic hero rotator, FAQ, scroll effects
-│   └── contact.js      # AJAX form handler, validation, rate limiting, and toast system
-├── api/
-│   └── contact.php     # Shared hosting PHP mailer with rate limiting and honeypot protection
-├── assets/
-│   ├── favicon.svg     # Geometric emerald monogram vector favicon
-│   └── images/         # Asset placeholders
-├── .htaccess           # Apache / LiteSpeed performance & security configuration
-├── rules.md            # Project rules inheriting from global workspace standards
-└── README.md           # Documentation
+├── apps/
+│   ├── web/                    # Next.js 15+ App Router, Tailwind CSS, Lucide Icons, RHF + Zod
+│   │   ├── app/
+│   │   │   ├── page.tsx        # Public Agency Homepage (Root /)
+│   │   │   ├── admin/          # Dedicated Admin Login & Session router (/admin)
+│   │   │   ├── (dashboard)/
+│   │   │   │   ├── dashboard/  # Company Directory (Search, Pagination, Lightbox Gallery)
+│   │   │   │   └── admin/manage-companies/ # ADMIN ONLY Management Data Table
+│   │   │   ├── login/          # Redirects to /admin
+│   │   │   └── unauthorized/   # Friendly RBAC Access-Denied Fallback
+│   │   ├── components/         
+│   │   │   ├── landing/        # HeroSection, Services, About, Process, Faq, Contact...
+│   │   │   └── ui/             # Modals, Navbar, Pagination, SearchInput...
+│   │   └── middleware.ts       # Edge route protection & RBAC validation
+│   └── api/                    # NestJS 11+ REST API
+│       ├── src/
+│       │   ├── auth/           # 15m Access + 7d Refresh token rotation & revocation
+│       │   ├── companies/      # Multi-image multipart upload, CRUD, 4-field search
+│       │   ├── contact/        # Public inquiry handler (POST /api/contact)
+│       │   ├── storage/        # StorageService abstraction (Local disk / S3 / R2)
+│       │   ├── users/          # User repository & hashed refresh token persistence
+│       │   ├── common/         # JwtAuthGuard, RolesGuard, @Roles(), @CurrentUser()
+│       │   └── prisma/         # PrismaService
+│       └── prisma/
+│           ├── schema.prisma   # SQLite default for instant zero-dependency local run
+│           ├── schema.postgres.prisma # PostgreSQL schema for production
+│           └── seed.ts         # Pre-seeds ADMIN, ADD_COMPANY, and initial companies
+├── packages/
+│   └── shared/                 # Shared TypeScript interfaces, DTOs, and Zod schemas
+├── legacy/                     # Archived previous static website files
+├── turbo.json                  # Turborepo task pipeline
+└── pnpm-workspace.yaml         # pnpm workspace configuration
 ```
 
 ---
 
-## 🛠️ Deployment on Shared Webhosting (cPanel / Apache)
+## ⚡ Quick Start
 
-1. Connect to your shared hosting account via **cPanel File Manager** or **FTP (FileZilla / WinSCP)**.
-2. Navigate to your target web root folder (usually `public_html` or a subfolder / subdomain).
-3. Upload all files from the `projectm` directory:
-   - `index.html`
-   - `css/`
-   - `js/`
-   - `api/`
-   - `assets/`
-   - `.htaccess`
-4. In `api/contact.php`, update the `$to` variable to your preferred notification email address:
-   ```php
-   $to = 'your-email@yourdomain.com';
-   ```
-5. Test the contact form and interactions live in your browser.
+### 1. Install Dependencies
+```bash
+pnpm install
+```
+
+### 2. Database Sync & Seed
+```bash
+# Sync database schema (SQLite dev.db)
+pnpm db:push
+
+# Seed ADMIN, ADD_COMPANY accounts & sample companies
+pnpm db:seed
+```
+
+### 3. Start Development Servers
+```bash
+pnpm dev
+```
+- **Public Agency Website:** [http://localhost:3000](http://localhost:3000)
+- **Admin Portal Login:** [http://localhost:3000/admin](http://localhost:3000/admin)
+- **Backend API:** [http://localhost:4000/api](http://localhost:4000/api)
+- **Photo Uploads:** [http://localhost:4000/uploads/](http://localhost:4000/uploads/)
 
 ---
 
-## 📜 Rules & Standards
-- Inherits from: [`P:\global-rules.md`](P:/global-rules.md) and [`projects/.agents/rules/global-rules.md`](../.agents/rules/global-rules.md).
+## 🔐 Demo Credentials
+
+| Role | Email | Password | Permissions |
+| :--- | :--- | :--- | :--- |
+| **`ADMIN`** | `admin@projectm.com` | `Password123!` | Full Access: Manage Companies screen (`/admin/manage-companies`), Edit records, delete companies, upload/remove images, add company modal, view directory. |
+| **`ADD_COMPANY`** | `operator@projectm.com` | `Password123!` | Operator Access: Add Company modal popup, view directory, global search, pagination, photo galleries. Blocked from Edit/Delete. |
+
+*(The `/admin` login page includes one-click demo quick-fill buttons for fast testing).*

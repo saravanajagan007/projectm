@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String         @id @default(uuid())
+  email              String         @unique
+  passwordHash       String
+  role               String         @default("ADD_COMPANY") // "ADMIN" or "ADD_COMPANY"
+  hashedRefreshToken String?
+  companies          Company[]
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+}
+
+model Company {
+  id                     String         @id @default(uuid())
+  name                   String
+  contactPerson          String         @default("")
+  contactNumber          String
+  alternateContactNumber String?
+  email                  String?
+  createdById            String
+  createdBy              User           @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  images                 CompanyImage[]
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+}
+
+model CompanyImage {
+  id        String   @id @default(uuid())
+  url       String
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
